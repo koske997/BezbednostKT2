@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.emailDTO;
 import com.example.demo.service.UserService;
 import com.example.demo.view.UserLoginView;
 import com.example.demo.view.UserTokenState;
@@ -21,7 +22,7 @@ public class SearchController {
 
     @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, path = "/search")
-    public ResponseEntity<?> search(@RequestBody String email) throws Exception {
+    public ResponseEntity<?> search(@RequestBody emailDTO email) throws Exception {
         return new ResponseEntity<>(this.userService.safeFindOneByEmail(email), HttpStatus.OK);
     }
 

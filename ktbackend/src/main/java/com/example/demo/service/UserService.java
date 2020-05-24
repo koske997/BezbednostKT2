@@ -1,5 +1,7 @@
 package com.example.demo.service;
 
+import com.example.demo.dto.UserSearchDTO;
+import com.example.demo.dto.emailDTO;
 import com.example.demo.model.*;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.security.TokenUtils;
@@ -22,6 +24,7 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 @Service
@@ -45,28 +48,45 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    public Users safeFindOneByEmail(String email)
-            throws Exception {
+    public UserSearchDTO safeFindOneByEmail(emailDTO emaill) throws SQLException {
+        System.out.println(emaill.getEmail());
 
         String sql = "select "
-                + "first_name, last_name, email from users"
+                + "first_name, last_name, email from users "
                 + "where email = ?";
+
+
         DataSourceBuilder dataSourceBuilder = DataSourceBuilder.create();
         dataSourceBuilder.driverClassName("org.postgresql.Driver");
         dataSourceBuilder.url("jdbc:postgresql://localhost:5432/postgres?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8");
         dataSourceBuilder.username("postgres");
-        dataSourceBuilder.password("aco");
+        dataSourceBuilder.password("JovanJenjic123");
 
 
         DataSource dataSource = dataSourceBuilder.build();
         Connection c = dataSource.getConnection();
         PreparedStatement p = c.prepareStatement(sql);
-        p.setString(1, email);
-        ResultSet rs = p.executeQuery(sql);
+        p.setString(1, emaill.getEmail());
+        ResultSet rs = p.executeQuery();
 
-        System.out.println("IZBACILO JEEE ---------------- "+rs);
+        String firstName = "";
+        String lastName = "";
+        String email = "";
+        while (rs.next()) {
+            firstName = rs.getString("first_name");
+            lastName = rs.getString("last_name");
+            email = rs.getString("email");
 
-        return null;
+            System.out.println(firstName + "\t" + lastName +
+                    "\t" + email);
+        }
+
+        UserSearchDTO u = new UserSearchDTO();
+        u.setEmail(email);
+        u.setFirstName(firstName);
+        u.setLastName(lastName);
+
+        return u;
         // omitted - process rows and return an account list
     }
 
