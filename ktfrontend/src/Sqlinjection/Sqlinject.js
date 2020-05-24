@@ -3,6 +3,8 @@ import {updateObject} from '../utility';
 import {connect} from 'react-redux';
 import * as actions from '../store/actions/index';
 import Navbar from '../Navbar/Navbar';
+import axios from '../axios-objects';
+
 
 class Sqlinject extends React.PureComponent {
     state = {
@@ -11,7 +13,10 @@ class Sqlinject extends React.PureComponent {
         },
         validation: {
             email: true
-        }
+        },
+        firstName: '',
+        lastName: '',
+        email: ''
     }
 
     inputChangdeHandler = (event, type) => {
@@ -33,10 +38,21 @@ class Sqlinject extends React.PureComponent {
         }
     }
 
-    loginHandler = (event) => {
+    loginHandler = async(event) => {
         event.preventDefault();
-        if(this.state.validation.email && this.state.validation.password)
-            this.props.onLogin(this.state.auth.email, this.state.auth.password);
+        const {email} = this.state.auth;
+        const emaill = {email};
+        console.log(emaill);
+        
+        try {
+            const response = await axios.post('/search', emaill);
+            if (response) {
+                this.setState({firstName: response.data.firstName, lastName: response.data.lastName, email: response.data.email})
+            }
+        } catch(err) {
+            console.log(err);
+        }
+    
     }
 
     render() {
@@ -56,10 +72,24 @@ class Sqlinject extends React.PureComponent {
                     <a href="/" className="btn_1" onClick={(event) => {this.loginHandler(event); } }>Search</a>
                         
                     </div>
-                    {/* <div className="invalid_1">
-                        {(!this.state.validation.email || !this.state.validation.password) ? 
-                            <p>Enter all fields</p> : null}
-                    </div> */}
+                    <div className="car-card">
+                        <h3>User</h3>
+                        <div className="car-card-inner">
+                            <div className="right-side">
+                                <div>
+                                    <div>
+                                        <p className="icon-text">{this.state.firstName}</p>
+                                    </div>
+                                    <div>
+                                        <p className="icon-text">{this.state.lastName}</p>
+                                    </div>
+                                    <div>
+                                        <p className="icon-text">{this.state.email}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         );
