@@ -8,6 +8,7 @@ import com.example.demo.view.UserRegisterView;
 import com.example.demo.view.UserTokenState;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,6 +18,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.List;
 
 @Service
@@ -39,6 +44,34 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    public Users safeFindOneByEmail(String email)
+            throws Exception {
+
+        String sql = "select "
+                + "first_name, last_name, email from users"
+                + "where email = ?";
+        DataSourceBuilder dataSourceBuilder = DataSourceBuilder.create();
+        dataSourceBuilder.driverClassName("org.postgresql.Driver");
+        dataSourceBuilder.url("jdbc:postgresql://localhost:5432/postgres?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8");
+        dataSourceBuilder.username("postgres");
+        dataSourceBuilder.password("aco");
+
+
+        DataSource dataSource = dataSourceBuilder.build();
+        Connection c = dataSource.getConnection();
+        PreparedStatement p = c.prepareStatement(sql);
+        p.setString(1, email);
+        ResultSet rs = p.executeQuery(sql);
+
+        System.out.println("IZBACILO JEEE ---------------- "+rs);
+
+        return null;
+        // omitted - process rows and return an account list
+    }
+
+
+
 
     public Users register(UserRegisterView userRegisterView) {
         if (!userRegisterView.getPassword().equals(userRegisterView.getRepeatPassword()))

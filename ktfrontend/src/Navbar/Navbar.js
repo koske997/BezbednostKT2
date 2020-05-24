@@ -19,7 +19,7 @@ class Navbar extends React.PureComponent {
                     {sessionStorage.getItem('role') === 'ADMIN' ? <li><a href="/certificate">Certificate</a></li> : null}
                     {sessionStorage.getItem('token') === null ? <li><a href="/login">Login</a></li> : null}
                     {sessionStorage.getItem('token') === null ? <li><a href="/registration">Registration</a></li> : null}
-                    {sessionStorage.getItem('token') === null ? <li><a href="/login">Sql injection</a></li> : null}
+                    {sessionStorage.getItem('token') === null ? <li><a href="/sqll">Sql injection</a></li> : null}
                     {sessionStorage.getItem('token') !== null ? <li><a href="/login" onClick={(event) => this.logoutHandler(event)}>Logout</a></li> : null}
                 </ul>
             </nav>
